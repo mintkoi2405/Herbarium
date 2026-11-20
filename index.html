@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HERBARIUM</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Custom Crosshair Reticle -->
+  <div class="cursor-reticle" id="cursorReticle">
+    <span id="reticleLabel">000,000</span>
+  </div>
+
+  <!-- Global Halftone Matrix Overlay -->
+  <div class="halftone-overlay" id="halftoneOverlay"></div>
+
+  <!-- Sticky Minimal Control Bar -->
+  <header class="global-header">
+    <div class="brand-mark">HERBARIUM // 00</div>
+    <div class="controls">
+      <button id="halftoneToggleBtn">HALFTONE: OFF</button>
+      <button id="invertBtn">INVERT</button>
+      <button id="glitchBtn">GLITCH: OFF</button>
+    </div>
+  </header>
+
+  <!-- Sticky Chapter Navigation -->
+  <nav class="chapter-nav">
+    <a href="#sec-1" class="nav-link active">01</a>
+    <a href="#sec-2" class="nav-link">02</a>
+    <a href="#sec-3" class="nav-link">03</a>
+    <a href="#sec-4" class="nav-link">04</a>
+    <a href="#sec-5" class="nav-link">05</a>
+    <a href="#sec-6" class="nav-link">06</a>
+    <a href="#sec-7" class="nav-link">07</a>
+    <a href="#sec-8" class="nav-link">08</a>
+  </nav>
+
+  <!-- Main Vertical Scroll Experience -->
+  <main class="scroll-container">
+
+    <!-- PROMINENT POEM TITLE HERO -->
+    <section class="poem-hero">
+      <div class="hero-kicker">[ INTERACTIVE MEDIA 1 ]</div>
+      <h1 class="main-poem-title">HERBARIUM</h1>
+      <div class="hero-divider"></div>
+      <p class="hero-subtitle">A1-Interactive Web-based Poetry</p>
+    </section>
+
+    <!-- SECTION 01 -->
+    <section class="poetry-section layout-hero" id="sec-1">
+      <div class="visual-stage">
+        <canvas id="canvas-1"></canvas>
+        <div class="canvas-hud">
+          <span>FIG 01</span>
+          <span>MOVE TO BEND // CLICK TO SOW</span>
+        </div>
+      </div>
+      <div class="poem-column">
+        <span class="stanza-index">I.</span>
+        <p class="verse">Beneath the <span class="word-scramble" data-alt="binary">silver</span> crust of quiet screens,</p>
+        <p class="verse">A <span class="word-bloom" data-note="SPECIMEN 01: Digital fern fossilized inside a 1-bit sector.">phantom fern</span> uncurls its jagged spine,</p>
+        <div class="micro-readout" id="note-1"></div>
+      </div>
+    </section>
+
+    <!-- SECTION 02 -->
+    <section class="poetry-section layout-reversed" id="sec-2">
+      <div class="poem-column">
+        <span class="stanza-index">II.</span>
+        <p class="verse">No chlorophyll inhabits these machines,</p>
+        <p class="verse">Yet <span class="word-redact">monochrome</span> roots through copper wires entwine.</p>
+        <div class="micro-readout" id="circuitStatus"></div>
+      </div>
+      <div class="visual-stage" id="circuitStage">
+        <canvas id="canvas-2"></canvas>
+        <div class="canvas-hud">
+          <span>FIG 02 // CLICK NODES TO CONNECT</span>
+          <button id="resetCircuitBtn" class="mini-btn">RESET</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 03 -->
+    <section class="poetry-section layout-stacked" id="sec-3">
+      <div class="visual-stage wide-stage">
+        <canvas id="canvas-3"></canvas>
+        <div class="canvas-hud">
+          <span>FIG 03</span>
+          <label class="meta-tag slider-label">DOT SCALE: <input type="range" id="dotScaleSlider" min="8" max="26" value="14"></label>
+        </div>
+      </div>
+      <div class="poem-row">
+        <span class="stanza-index">III.</span>
+        <div>
+          <p class="verse">We pressed the <span class="word-scramble" data-alt="fractured">delicate</span> petals into grid,</p>
+          <p class="verse">And drained the summer from each <span class="word-redact">bleeding</span> vein,</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 04 -->
+    <section class="poetry-section layout-spotlight" id="sec-4">
+      <div class="poem-column">
+        <span class="stanza-index">IV.</span>
+        <p class="verse">To keep the <span class="word-bloom" data-note="SPECIMEN 04: Optical mask revealing skeletal botanical geometry.">memory</span> of gardens hid</p>
+        <p class="verse">Inside a vault of <span class="word-scramble" data-alt="endless">static</span> black and white.</p>
+        <div class="micro-readout" id="note-4"></div>
+      </div>
+      <div class="visual-stage xray-box" id="xrayBox">
+        <svg class="xray-base" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+          <rect x="0" y="0" width="400" height="300" fill="currentColor"/>
+          <text x="200" y="155" text-anchor="middle" fill="var(--bg)" font-size="13">[ HOVER TO X-RAY ]</text>
+        </svg>
+        <svg class="xray-reveal" id="xrayReveal" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+          <g stroke="currentColor" fill="none" stroke-width="1.3">
+            <circle cx="200" cy="150" r="110" stroke-dasharray="3 3"/>
+            <circle cx="200" cy="150" r="70"/>
+            <path d="M200 260 C200 170, 110 150, 95 75 C165 85, 200 140, 200 190 Z"/>
+            <path d="M200 230 C200 140, 290 120, 305 45 C235 55, 200 110, 200 160 Z"/>
+            <path d="M200 170 C200 110, 150 80, 160 30 C190 55, 200 95, 200 130 Z"/>
+            <rect x="188" y="138" width="24" height="24"/>
+            <line x1="20" y1="150" x2="380" y2="150" stroke-dasharray="2 6"/>
+            <line x1="200" y1="10" x2="200" y2="290" stroke-dasharray="2 6"/>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- SECTION 05 -->
+    <section class="poetry-section layout-hero" id="sec-5">
+      <div class="visual-stage">
+        <canvas id="canvas-5"></canvas>
+        <div class="canvas-hud">
+          <span>FIG 05</span>
+          <span>HOLD CLICK TO IMPLODE</span>
+        </div>
+      </div>
+      <div class="poem-column">
+        <span class="stanza-index">V.</span>
+        <p class="verse">Observe the <span class="word-bloom" data-note="SPECIMEN 05: Autonomous pixel particles governed by cursor gravity.">halftone</span> shadow on the wall,</p>
+        <p class="verse">A constellation built from <span class="word-redact">missing</span> light,</p>
+        <div class="micro-readout" id="note-5"></div>
+      </div>
+    </section>
+
+    <!-- SECTION 06 -->
+    <section class="poetry-section layout-reversed" id="sec-6">
+      <div class="poem-column">
+        <span class="stanza-index">VI.</span>
+        <p class="verse">Where pixel seeds in <span class="word-scramble" data-alt="measured">silent</span> rhythm fall</p>
+        <p class="verse">And blossom through the <span class="word-redact">architecture</span> of night.</p>
+      </div>
+      <div class="visual-stage">
+        <canvas id="canvas-6"></canvas>
+        <div class="canvas-hud">
+          <span>FIG 06 // DRAG TO ROTATE</span>
+          <span id="rotationReadout">00° / 00°</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 07 -->
+    <section class="poetry-section layout-stacked" id="sec-7">
+      <div class="visual-stage wide-stage">
+        <canvas id="canvas-7"></canvas>
+        <div class="canvas-hud">
+          <span>FIG 07 // HOVER TO SHATTER</span>
+          <button id="switchSpecimenBtn" class="mini-btn">SPECIMEN 01/03</button>
+        </div>
+      </div>
+      <div class="poem-row">
+        <span class="stanza-index">VII.</span>
+        <div>
+          <p class="verse">Touch any <span class="word-scramble" data-alt="trembling">dormant</span> syllable to wake</p>
+          <p class="verse">The sleeping geometry beneath the <span class="word-redact">ink</span>,</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 08 -->
+    <section class="poetry-section layout-terminus" id="sec-8">
+      <div class="poem-column">
+        <span class="stanza-index">VIII.</span>
+        <p class="verse">For every <span class="word-bloom" data-note="SPECIMEN 08: Final cryptographic seal.">cursor</span> leaves a quiet wake</p>
+        <p class="verse">Where wildness blooms along the <span class="word-scramble" data-alt="pixel">broken</span> brink.</p>
+        <div class="micro-readout" id="note-8"></div>
+      </div>
+      <div class="cipher-console">
+        <div class="meta-tag">ALIGN [ 0 - 1 - B - T ]</div>
+        <div class="dial-row" id="dialRow">
+          <button class="cipher-dial" data-target="0">X</button>
+          <button class="cipher-dial" data-target="1">9</button>
+          <button class="cipher-dial" data-target="B">Z</button>
+          <button class="cipher-dial" data-target="T">?</button>
+        </div>
+        <div class="lock-status" id="lockStatus">LOCKED</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Minimal Scroll Progress Bar -->
+  <div class="scroll-progress-bar" id="scrollProgressBar"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

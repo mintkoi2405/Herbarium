@@ -1,0 +1,418 @@
+@font-face {
+  font-family: 'Geist Pixel';
+  src: local('Geist Pixel Regular'), local('GeistPixel-Regular'),
+       url('GeistPixel-Regular.woff2') format('woff2'),
+       url('GeistPixel-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #070707;
+  --fg: #f2f2f2;
+  --muted: #777777;
+  --border: #2a2a2a;
+  --font-pixel: 'Geist Pixel', 'Silkscreen', monospace;
+  --font-mono: 'Space Mono', monospace;
+}
+
+body.inverted {
+  --bg: #f4f4f2;
+  --fg: #0a0a0a;
+  --muted: #555555;
+  --border: #cccccc;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-pixel);
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: crosshair;
+  line-height: 1.5;
+}
+
+/* Global Halftone Matrix Overlay */
+.halftone-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  background-image: radial-gradient(var(--fg) 1.25px, transparent 1.25px);
+  background-size: 8px 8px;
+  transition: opacity 0.3s ease;
+}
+
+body.halftone-on .halftone-overlay {
+  opacity: 0.16;
+}
+
+/* Custom Reticle Follower */
+.cursor-reticle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(14px, 14px);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  background: var(--fg);
+  color: var(--bg);
+  padding: 2px 6px;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+/* Minimal Sticky Control Bar */
+.global-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--border);
+  padding: 0.65rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg);
+}
+
+.brand-mark {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+button {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--fg);
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  padding: 0.35rem 0.65rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background-color 0.12s steps(2), color 0.12s steps(2);
+}
+
+button:hover, button.active {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.mini-btn {
+  font-size: 0.62rem;
+  padding: 0.2rem 0.5rem;
+}
+
+/* Right Chapter Nav */
+.chapter-nav {
+  position: fixed;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: var(--bg);
+  padding: 0.35rem;
+  border: 1px solid var(--border);
+}
+
+.nav-link {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.25rem 0.4rem;
+  text-align: center;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--bg);
+  background: var(--fg);
+}
+
+/* Main Container */
+.scroll-container {
+  position: relative;
+  z-index: 10;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 5.5rem 3.8rem 5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4.5rem;
+}
+
+/* PROMINENT POEM TITLE HERO */
+.poem-hero {
+  min-height: 62vh;
+  border: 2px solid var(--fg);
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1.25rem;
+  position: relative;
+  background: var(--bg);
+}
+
+.hero-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.25em;
+  color: var(--muted);
+}
+
+.main-poem-title {
+  font-size: clamp(3.2rem, 9.5vw, 8.5rem);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-divider {
+  width: 64px;
+  height: 3px;
+  background: var(--fg);
+  margin: 0.25rem 0;
+}
+
+.hero-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  color: var(--fg);
+}
+
+/* Poetry Sections */
+.poetry-section {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  padding: 2.25rem;
+  display: grid;
+  gap: 2.25rem;
+  align-items: center;
+  position: relative;
+  transition: border-color 0.25s ease;
+}
+
+.poetry-section:hover {
+  border-color: var(--fg);
+}
+
+.layout-hero { grid-template-columns: 1.3fr 1fr; }
+.layout-reversed { grid-template-columns: 1fr 1.3fr; }
+.layout-stacked { grid-template-columns: 1fr; }
+.layout-spotlight { grid-template-columns: 1fr 1.2fr; }
+.layout-terminus { grid-template-columns: 1fr 1fr; border: 2px solid var(--fg); }
+
+/* Visual Stages */
+.visual-stage {
+  border: 1px solid var(--border);
+  width: 100%;
+  height: 360px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.wide-stage { height: 320px; }
+
+.visual-stage canvas {
+  display: block;
+  width: 100%;
+  height: calc(100% - 34px);
+}
+
+.canvas-hud {
+  height: 34px;
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+  padding: 0 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--bg);
+}
+
+.meta-tag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.slider-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+input[type="range"] {
+  accent-color: var(--fg);
+  cursor: pointer;
+}
+
+/* Poetry Column Styling */
+.poem-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.poem-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.stanza-index {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+.verse {
+  font-size: clamp(1.2rem, 1.9vw, 1.65rem);
+  line-height: 1.65;
+  letter-spacing: 0.02em;
+}
+
+.micro-readout {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  border-left: 2px solid var(--fg);
+  padding-left: 0.75rem;
+  min-height: 1.1rem;
+}
+
+.micro-readout:empty {
+  display: none;
+}
+
+/* Chamber 04: Dual-Layer X-Ray SVG */
+.xray-box { position: relative; cursor: none; }
+.xray-base, .xray-reveal { position: absolute; inset: 0; width: 100%; height: 100%; }
+.xray-reveal { background: var(--bg); clip-path: circle(0px at 50% 50%); pointer-events: none; }
+
+/* Chamber 08: Combination Cipher Lock */
+.cipher-console {
+  border: 1px solid var(--border);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  text-align: center;
+  min-height: 250px;
+}
+
+.dial-row { display: flex; gap: 0.85rem; }
+.cipher-dial {
+  width: 64px;
+  height: 80px;
+  font-size: 1.85rem;
+  border: 2px solid var(--fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cipher-dial.matched { background: var(--fg); color: var(--bg); }
+.lock-status { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
+
+/* Inline Interactive Words */
+.word-scramble { display: inline-block; border-bottom: 1px dashed var(--fg); cursor: pointer; }
+.word-scramble:hover { background: var(--fg); color: var(--bg); }
+
+.word-redact {
+  background: var(--fg);
+  color: var(--fg);
+  padding: 0 5px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s steps(3), color 0.2s steps(3);
+}
+.word-redact.revealed { background: transparent; color: var(--fg); text-decoration: underline; }
+
+.word-bloom { cursor: pointer; font-weight: bold; }
+.word-bloom::after { content: ' [+]'; font-size: 0.7em; color: var(--muted); }
+
+/* Glitch Effect */
+body.glitch-active .verse,
+body.glitch-active .main-poem-title {
+  animation: textJitter 0.22s infinite steps(2);
+}
+@keyframes textJitter {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, -2px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Minimal Scroll Progress Bar at Bottom */
+.scroll-progress-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: var(--fg);
+  z-index: 200;
+  transition: width 0.1s linear;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 960px) {
+  .poetry-section {
+    grid-template-columns: 1fr !important;
+    padding: 1.5rem;
+  }
+  .visual-stage { height: 300px; }
+  .chapter-nav, .cursor-reticle { display: none; }
+  .scroll-container { padding: 5.5rem 1rem 3rem 1rem; }
+  .poem-hero { min-height: 45vh; padding: 2.5rem 1rem; }
+}
