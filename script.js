@@ -1,6 +1,234 @@
 window.addEventListener('DOMContentLoaded', () => {
 
   // ==========================================
+  // 0. AUDIO / SOUND SYSTEM
+  // ==========================================
+  const bgMusic1 = new Audio('music background.mp3');
+  const stage3Music = new Audio('stage 3.mp3');
+  const stage4Music = new Audio('stage 4.mp3');
+  const stage5Music = new Audio('stage 5.mp3');
+  const stage6Music = new Audio('stage 6.mp3');
+  const stage7Music = new Audio('stage 7.mp3');
+  const clickSound = new Audio('click.mp3');
+  const leavesSound = new Audio('leaves rustling.mp3');
+  const unlockSound = new Audio('unlock.mp3');
+
+  const STAGE3_TARGET_VOLUME = 0.3;
+  const STAGE3_FADE_DURATION = 100; // ms
+
+  // Configure continuous & looping background music
+  bgMusic1.loop = true;
+  bgMusic1.volume = 0.125;
+
+  stage3Music.loop = true;
+  stage3Music.volume = 0.1;
+
+  stage4Music.loop = true;
+  stage4Music.volume = 0.05;
+
+  stage5Music.loop = true;
+  stage5Music.volume = 0.4;
+
+  stage6Music.loop = true;
+  stage6Music.volume = 0.9;
+
+  stage7Music.loop = true;
+  stage7Music.volume = 0.4;
+
+  // Configure interaction sound effects
+  clickSound.volume = 1;
+  leavesSound.volume = 1;
+  leavesSound.loop = true;
+  unlockSound.volume = 1;
+
+  let isAudioEnabled = true;
+  let bgMusicStarted = false;
+  let currentActiveStageId = 'sec-1';
+  let stage3FadeRaf = null;
+
+  function cancelStage3Fade() {
+    if (stage3FadeRaf !== null) {
+      cancelAnimationFrame(stage3FadeRaf);
+      stage3FadeRaf = null;
+    }
+  }
+
+  function fadeStage3To(targetVolume, duration = STAGE3_FADE_DURATION, pauseOnComplete = false) {
+    cancelStage3Fade();
+
+    const clampedTarget = Math.max(0, Math.min(STAGE3_TARGET_VOLUME, targetVolume));
+    const startVolume = stage3Music.volume;
+
+    if (duration <= 0 || Math.abs(clampedTarget - startVolume) < 0.001) {
+      stage3Music.volume = clampedTarget;
+      if (pauseOnComplete && clampedTarget === 0) {
+        stage3Music.pause();
+      }
+      return;
+    }
+
+    const startTime = performance.now();
+
+    function step(now) {
+      const progress = Math.min(1, (now - startTime) / duration);
+      const eased = progress < 0.5
+        ? 4 * progress * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+      stage3Music.volume = Math.max(0, Math.min(STAGE3_TARGET_VOLUME, startVolume + (clampedTarget - startVolume) * eased));
+
+      if (progress < 1) {
+        stage3FadeRaf = requestAnimationFrame(step);
+      } else {
+        stage3FadeRaf = null;
+        if (pauseOnComplete && clampedTarget === 0) {
+          stage3Music.pause();
+        }
+      }
+    }
+
+    stage3FadeRaf = requestAnimationFrame(step);
+  }
+
+  function fadeInStage3() {
+    if (!isAudioEnabled) return;
+    if (stage3Music.paused) {
+      stage3Music.volume = 0;
+      stage3Music.play()
+        .then(() => {
+          fadeStage3To(STAGE3_TARGET_VOLUME, STAGE3_FADE_DURATION, false);
+        })
+        .catch(() => {
+          // Wait for user interaction if browser blocks autoplay
+        });
+    } else {
+      fadeStage3To(STAGE3_TARGET_VOLUME, STAGE3_FADE_DURATION, false);
+    }
+  }
+
+  function fadeOutStage3(instant = false) {
+    if (instant) {
+      cancelStage3Fade();
+      stage3Music.volume = 0;
+      stage3Music.pause();
+      return;
+    }
+    if (stage3Music.paused || stage3Music.volume === 0) {
+      stage3Music.pause();
+      return;
+    }
+    fadeStage3To(0, STAGE3_FADE_DURATION, true);
+  }
+
+  function pauseNonStage3Tracks() {
+    stage4Music.pause();
+    stage5Music.pause();
+    stage6Music.pause();
+    stage7Music.pause();
+  }
+
+  function syncStageMusic(activeId) {
+    currentActiveStageId = activeId;
+
+    if (!isAudioEnabled) {
+      fadeOutStage3(true);
+      pauseNonStage3Tracks();
+      return;
+    }
+
+    if (activeId === 'sec-3') {
+      pauseNonStage3Tracks();
+      fadeInStage3();
+    } else if (activeId === 'sec-4') {
+      fadeOutStage3(false);
+      stage5Music.pause();
+      stage6Music.pause();
+      stage7Music.pause();
+      stage4Music.play().catch(() => {});
+    } else if (activeId === 'sec-5') {
+      fadeOutStage3(false);
+      stage4Music.pause();
+      stage6Music.pause();
+      stage7Music.pause();
+      stage5Music.play().catch(() => {});
+    } else if (activeId === 'sec-6') {
+      fadeOutStage3(false);
+      stage4Music.pause();
+      stage5Music.pause();
+      stage7Music.pause();
+      stage6Music.play().catch(() => {});
+    } else if (activeId === 'sec-7') {
+      fadeOutStage3(false);
+      stage4Music.pause();
+      stage5Music.pause();
+      stage6Music.pause();
+      stage7Music.play().catch(() => {});
+    } else {
+      fadeOutStage3(false);
+      pauseNonStage3Tracks();
+    }
+  }
+
+  function startBackgroundMusic() {
+    if (!isAudioEnabled) return;
+
+    if (!bgMusicStarted) {
+      bgMusic1.play()
+        .then(() => {
+          bgMusicStarted = true;
+        })
+        .catch(() => {
+          // Wait for first user interaction if browser blocks autoplay
+        });
+    }
+
+    syncStageMusic(currentActiveStageId);
+  }
+
+  // Attempt playback immediately on page load
+  startBackgroundMusic();
+
+  // Trigger background music on the user's first interaction
+  ['click', 'keydown', 'touchstart', 'scroll'].forEach(evt => {
+    window.addEventListener(evt, startBackgroundMusic, { once: true });
+  });
+
+  // Header audio toggle button
+  const audioToggleBtn = document.getElementById('audioToggleBtn');
+  if (audioToggleBtn) {
+    audioToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      isAudioEnabled = !isAudioEnabled;
+
+      audioToggleBtn.classList.toggle('active', isAudioEnabled);
+      audioToggleBtn.textContent = `AUDIO: ${isAudioEnabled ? 'ON' : 'OFF'}`;
+
+      if (isAudioEnabled) {
+        bgMusic1.play().catch(() => {});
+        syncStageMusic(currentActiveStageId);
+        bgMusicStarted = true;
+        clickSound.currentTime = 0;
+        clickSound.play().catch(() => {});
+      } else {
+        bgMusic1.pause();
+        fadeOutStage3(true);
+        pauseNonStage3Tracks();
+        leavesSound.pause();
+        clickSound.pause();
+        unlockSound.pause();
+      }
+    });
+  }
+
+  // Play "click" sound on every mouse down
+  window.addEventListener('mousedown', () => {
+    if (!isAudioEnabled) return;
+    startBackgroundMusic();
+    clickSound.currentTime = 0;
+    clickSound.play().catch(() => {});
+  });
+
+  // ==========================================
   // 1. GLOBAL VISUAL CONTROLS & RETICLE TRACKER
   // ==========================================
   const reticle = document.getElementById('cursorReticle');
@@ -86,6 +314,7 @@ window.addEventListener('DOMContentLoaded', () => {
     let wind = 0;
     let targetWind = 0;
     let seed = 1.2;
+    let leavesTimeout = null;
 
     function resize() {
       canvas.width = canvas.clientWidth || 500;
@@ -97,6 +326,21 @@ window.addEventListener('DOMContentLoaded', () => {
     canvas.addEventListener('mousemove', (e) => {
       const rect = canvas.getBoundingClientRect();
       targetWind = ((e.clientX - rect.left) / rect.width - 0.5) * 0.85;
+
+      if (isAudioEnabled) {
+        if (leavesSound.paused) {
+          leavesSound.play().catch(() => {});
+        }
+        clearTimeout(leavesTimeout);
+        leavesTimeout = setTimeout(() => {
+          leavesSound.pause();
+        }, 250);
+      }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      clearTimeout(leavesTimeout);
+      leavesSound.pause();
     });
 
     canvas.addEventListener('click', () => {
@@ -507,6 +751,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const glyphsList = ['0', '1', 'B', 'T', 'X', '9', 'Z', '?'];
     const dials = document.querySelectorAll('.cipher-dial');
     const lockStatus = document.getElementById('lockStatus');
+    let wasUnlocked = false;
 
     dials.forEach(dial => {
       dial.addEventListener('click', () => {
@@ -518,9 +763,18 @@ window.addEventListener('DOMContentLoaded', () => {
         dial.classList.toggle('matched', isMatch);
 
         const allUnlocked = Array.from(dials).every(d => d.textContent === d.dataset.target);
-        if (allUnlocked && lockStatus) {
-          lockStatus.textContent = 'UNLOCKED';
-          lockStatus.style.color = getFgColor();
+        if (allUnlocked) {
+          if (lockStatus) {
+            lockStatus.textContent = 'UNLOCKED';
+            lockStatus.style.color = getFgColor();
+          }
+          if (!wasUnlocked && isAudioEnabled) {
+            unlockSound.currentTime = 0;
+            unlockSound.play().catch(() => {});
+          }
+          wasUnlocked = true;
+        } else {
+          wasUnlocked = false;
         }
       });
     });
@@ -533,7 +787,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const navLinks = document.querySelectorAll('.chapter-nav .nav-link');
   const progressBar = document.getElementById('scrollProgressBar');
 
-  window.addEventListener('scroll', () => {
+  function handleScroll() {
     let activeId = 'sec-1';
     sections.forEach(sec => {
       if (window.scrollY >= sec.offsetTop - 280) {
@@ -545,11 +799,16 @@ window.addEventListener('DOMContentLoaded', () => {
       link.classList.toggle('active', link.getAttribute('href') === `#${activeId}`);
     });
 
+    syncStageMusic(activeId);
+
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     const pct = Math.min(100, Math.max(0, (window.scrollY / maxScroll) * 100));
     if (progressBar) {
       progressBar.style.width = `${pct}%`;
     }
-  });
+  }
+
+  window.addEventListener('scroll', handleScroll);
+  handleScroll();
 
 });
